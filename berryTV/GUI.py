@@ -39,11 +39,11 @@ class window(QMainWindow):
       sb.setMovable(False)
       sb.setFloatable(False)
       #buttons
-      new = QAction(QIcon("new.png"), "new", self)
+      new = QAction(QIcon("add.png"), "new", self)
       sb.addAction(new)
-      settings = QAction(QIcon("settings.png"), "settings", self)
+      settings = QAction(QIcon("setting.png"), "settings", self)
       sb.addAction(settings)
-      exit = QAction(QIcon("exit.png"), "exit", self)
+      exit = QAction(QIcon("leave.png"), "exit", self)
       sb.addAction(exit)
       sb.actionTriggered[QAction].connect(self.sideBarBut)
 
