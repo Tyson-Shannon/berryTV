@@ -18,13 +18,18 @@ class window(QMainWindow):
       tb.setIconSize(QSize(50, 50))
       tb.setMovable(False)
       tb.setFloatable(False)
-      #logo display
-      logo = QAction(QIcon("berryLogo.png"), "berryTV", self)
-      tb.addAction(logo)
+      #title display
+      self.title_label = QLabel()
+      title_font = QFont("Classic Console", 30)
+      self.title_label.setFont(title_font) 
+      self.title_label.setStyleSheet("color: #FFFFFF;")
+      tb.addWidget(self.title_label)
+      self.title_label.setText("berryTV")
       #time display
       self.time_label = QLabel()
-      font = QFont("Arial", 20)
-      self.time_label.setFont(font) 
+      time_font = QFont("Arial", 20)
+      self.time_label.setFont(time_font) 
+      self.time_label.setStyleSheet("color: #FFFFFF;")
       tb.addWidget(self.time_label)
       self.timer = QTimer()
       self.timer.timeout.connect(self.update_time)
@@ -39,8 +44,8 @@ class window(QMainWindow):
       sb.setMovable(False)
       sb.setFloatable(False)
       #buttons
-      new = QAction(QIcon("add.png"), "new", self)
-      sb.addAction(new)
+      add = QAction(QIcon("add.png"), "add app", self)
+      sb.addAction(add)
       settings = QAction(QIcon("setting.png"), "settings", self)
       sb.addAction(settings)
       exit = QAction(QIcon("leave.png"), "exit", self)
@@ -57,4 +62,4 @@ class window(QMainWindow):
    def update_time(self):
       #update time display
       current_time = QTime.currentTime().toString("hh:mm:ss")
-      self.time_label.setText(current_time)
+      self.time_label.setText(" | "+current_time+" | ")
