@@ -1,7 +1,9 @@
-import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+import Settings
+import AddApp
 
 class window(QMainWindow):
    def __init__(self, parent = None):
@@ -58,6 +60,12 @@ class window(QMainWindow):
       #side bar button actions
       if button.text() == "exit":
          self.close()
+      if button.text() == "settings":
+         self.setWindow = Settings.settings()
+         self.setWindow.exec_()
+      if button.text() == "add app":
+         self.addWindow = AddApp.addApp()
+         self.addWindow.exec_()
    
    def update_time(self):
       #update time display
