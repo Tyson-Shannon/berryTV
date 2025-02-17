@@ -1,3 +1,4 @@
+#I don't think this works yet
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -25,10 +26,11 @@ class settings(QDialog):
         self.button.clicked.connect(self.toggle_startup)
 
         layout = QVBoxLayout()
-        #exit button
-        self.close_button = QPushButton("X", self) 
-        self.close_button.setGeometry(5, 5, 30, 30)
+        #close button
+        self.close_button = QPushButton("X")
+        self.close_button.setFixedSize(30, 30)
         self.close_button.clicked.connect(self.close)
+        layout.addWidget(self.close_button)
 
         layout.addWidget(self.label)
         layout.addWidget(self.button)

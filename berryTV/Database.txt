@@ -1,0 +1,2 @@
+youtube, firefox, www.youtube.com, URL
+pic, firefox, /home/berry/Desktop/berryTV/add.png, File

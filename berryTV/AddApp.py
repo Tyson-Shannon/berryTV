@@ -23,12 +23,6 @@ class addApp(QDialog):
         layout.addWidget(self.nameLabel)
         self.nameInput = QLineEdit(self)
         layout.addWidget(self.nameInput)
-        #pick browser
-        self.browserLabel = QLabel("Pick Browser", self)
-        layout.addWidget(self.browserLabel)
-        self.combobox = QComboBox()
-        self.combobox.addItems(self.get_available_browsers())
-        layout.addWidget(self.combobox)
         #URL/File?
         self.radioGroup = QButtonGroup(self)
         self.radio_url = QRadioButton("URL")
@@ -39,6 +33,13 @@ class addApp(QDialog):
         radio_layout.addWidget(self.radio_url)
         radio_layout.addWidget(self.radio_file)
         layout.addLayout(radio_layout)
+        #pick browser (disabled by default)
+        self.browserLabel = QLabel("Pick Browser", self)
+        layout.addWidget(self.browserLabel)
+        self.combobox = QComboBox()
+        self.combobox.addItems(self.get_available_browsers())
+        self.combobox.setEnabled(False)
+        layout.addWidget(self.combobox)
         #input field (disabled by default)
         self.inputField = QLineEdit()
         self.inputField.setPlaceholderText("Enter URL or select a file...")
@@ -75,9 +76,11 @@ class addApp(QDialog):
         if self.radio_url.isChecked():
             self.inputField.setEnabled(True)
             self.fileButton.setEnabled(False)
+            self.combobox.setEnabled(True)
         elif self.radio_file.isChecked():
             self.inputField.setEnabled(True)
             self.fileButton.setEnabled(True)
+            self.combobox.setEnabled(False)
     
     def select_file(self):
         #Open file dialog to select a file
@@ -87,12 +90,12 @@ class addApp(QDialog):
 
 
     def add_app(self):
-        #add data to data base
+        #add data to Database.txt
         name = self.nameInput.text()
         browser = self.combobox.currentText()
         location = self.inputField.text()
         inputType = "URL" if self.radio_url.isChecked() else "File"
         with open("Database.txt", "a") as f:
-            f.write(name+" "+browser+" "+location+" "+inputType+"\n")
+            f.write(name+", "+browser+", "+location+", "+inputType+"\n")
             f.close()
         self.close()

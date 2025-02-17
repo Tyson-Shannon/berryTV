@@ -36,15 +36,7 @@ class intro(QWidget):
       self.close()
 
 def is_venv_created(venv_path):
-    """
-    Check if a virtual environment exists at the specified path.
-    
-    Parameters:
-        venv_path (str): Path to the virtual environment directory.
-
-    Returns:
-        bool: True if the virtual environment exists, False otherwise.
-    """
+    #Check if a virtual environment exists at the specified path.
     if os.name == "nt":  # Windows
         expected_dirs = ["Scripts", "Lib"]
     else:  # macOS/Linux
