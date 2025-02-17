@@ -133,8 +133,7 @@ class window(QMainWindow):
          #button
          button = QPushButton("Open")
          button.setStyleSheet("background-color: #5E17EB; color: white; padding: 10px; border-radius: 5px;")
-         button.clicked.connect(lambda checked: self.scrollButton(app[1], app[2], app[3]))
-
+         button.clicked.connect(lambda checked, b=app[1], l=app[2], t=app[3]: self.scrollButton(b, l, t))
          # Centering
          item_layout.addWidget(title)
          item_layout.addWidget(image_label)
