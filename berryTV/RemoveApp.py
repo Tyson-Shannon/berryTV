@@ -2,7 +2,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-
 class removeApp(QDialog):
     def __init__(self):
         super().__init__()
@@ -39,6 +38,7 @@ class removeApp(QDialog):
         data = [line.strip() for line in data]
         for line in data:
             apps.append(line)
+        apps.sort()
         return apps
 
     def remove_app(self):

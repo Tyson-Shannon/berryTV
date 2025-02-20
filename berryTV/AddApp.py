@@ -3,6 +3,12 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import webbrowser
+import os
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+from shutil import copyfile
+from urllib.parse import urljoin
 
 class addApp(QDialog):
     def __init__(self):
@@ -98,4 +104,89 @@ class addApp(QDialog):
         with open("Database.txt", "a") as f:
             f.write(name+", "+browser+", "+location+", "+inputType+"\n")
             f.close()
+
+        #webscrape app image
+        # Ensure appImages directory exists
+        img_dir = "appImages"
+        if not os.path.exists(img_dir):
+            os.makedirs(img_dir)
+
+        img_path = os.path.join(img_dir, f"{name}.png")
+
+        if inputType == "URL":
+            # Scrape website favicon/logo
+            try:
+                #domain = urlparse(location).netloc
+                favicon_url = f"https://{location}/favicon.ico"
+
+                # Try to download favicon
+                response = requests.get(favicon_url, stream=True, timeout=5)
+                if response.status_code == 200:
+                    with open(img_path, "wb") as f:
+                        for chunk in response.iter_content(1024):
+                            f.write(chunk)
+
+                # If favicon download fails, try finding a larger image
+                response = requests.get(location, timeout=5)
+                soup = BeautifulSoup(response.text, "html.parser")
+                img_tag = soup.find("link", rel="icon") or soup.find("link", rel="shortcut icon")
+
+                if img_tag:
+                    img_url = img_tag["href"]
+                    img_url = urljoin(location, img_url)  # Correctly join relative paths
+
+                    img_response = requests.get(img_url, stream=True, timeout=5)
+                    if img_response.status_code == 200:
+                        with open(img_path, "wb") as f:
+                            for chunk in img_response.iter_content(1024):
+                                f.write(chunk)
+
+            except Exception as e:
+                print(f"Error fetching logo: {e}")
+
+        elif inputType == "File":
+            # Use a default placeholder icon for file-based apps
+            default_icon = "default_app.png"
+            if os.path.exists(default_icon):
+                copyfile(default_icon, img_path)
+
         self.close()
+    
+    def fetch_website_logo(url, save_path):
+        try:
+            parsed_url = urlparse(url)
+            base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+            # Fetch the webpage content
+            response = requests.get(url, timeout=5)
+            if response.status_code != 200:
+                print("Failed to retrieve page.")
+                return
+            
+            soup = BeautifulSoup(response.text, "html.parser")
+            
+            # Look for logo images (common patterns)
+            logo_candidates = soup.find_all("img", 
+                src=True, 
+                alt=lambda x: x and "logo" in x.lower() or 
+                            "logo" in (soup.find_parent("div", class_=lambda y: y and "logo" in y.lower()) or "").lower()
+            )
+
+            # Pick the first valid logo found
+            for img_tag in logo_candidates:
+                img_url = img_tag["src"]
+                if not img_url.startswith("http"):
+                    img_url = urljoin(base_url, img_url)  # Handle relative URLs
+
+                # Try downloading the image
+                img_response = requests.get(img_url, stream=True, timeout=5)
+                if img_response.status_code == 200:
+                    with open(save_path, "wb") as f:
+                        for chunk in img_response.iter_content(1024):
+                            f.write(chunk)
+                    return
+
+            print("No logo found.")
+        
+        except Exception as e:
+            print(f"Error fetching logo: {e}")

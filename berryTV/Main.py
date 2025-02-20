@@ -56,7 +56,7 @@ if __name__ == '__main__':
    venv_location = os.path.join(os.getcwd(), ".venv")  # Path to the "venv" directory
    if is_venv_created(venv_location) == False:
       # Required packages
-      required_packages = ["pyqt5"]  # List of packages to install
+      required_packages = ["pyqt5", "requests", "bs4"]  # List of packages to install
       # Create and set up the virtual environment
       InitSetup.create_and_setup_venv(venv_location, required_packages)
 

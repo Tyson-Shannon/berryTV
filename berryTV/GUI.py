@@ -55,8 +55,10 @@ class window(QMainWindow):
       #buttons
       add = QAction(QIcon("add.png"), "add app", self)
       sb.addAction(add)
-      remove = QAction(QIcon("remove.png"), "remove app", self)#change png
+      remove = QAction(QIcon("remove.png"), "remove app", self)
       sb.addAction(remove)
+      refresh = QAction(QIcon("refresh.png"), "refresh", self)
+      sb.addAction(refresh)
       settings = QAction(QIcon("setting.png"), "settings", self)
       sb.addAction(settings)
       exit = QAction(QIcon("leave.png"), "exit", self)
@@ -73,12 +75,10 @@ class window(QMainWindow):
       self.prev_button.setFixedSize(50, 50)
       self.prev_button.setStyleSheet("background-color: #5E17EB; color: white; border-radius: 25px;")
       self.prev_button.clicked.connect(self.prev_item)
-
       self.next_button = QPushButton(">")
       self.next_button.setFixedSize(50, 50)
       self.next_button.setStyleSheet("background-color: #5E17EB; color: white; border-radius: 25px;")
       self.next_button.clicked.connect(self.next_item)
-
       nav_layout.addWidget(self.prev_button)
       nav_layout.addWidget(self.reel)
       nav_layout.addWidget(self.next_button)
@@ -94,6 +94,13 @@ class window(QMainWindow):
       if button.text() == "settings":
          self.setWindow = Settings.settings()
          self.setWindow.exec_()
+      if button.text() == "refresh":
+         self.reel.close()
+         self.reel = QStackedWidget()
+         self.populate_reel()
+         layout = self.centralWidget().layout()
+         layout.itemAt(0).layout().removeWidget(self.reel)
+         layout.itemAt(0).layout().insertWidget(1, self.reel)
       if button.text() == "remove app":
          self.remWindow = RemoveApp.removeApp()
          self.remWindow.exec_()
@@ -123,13 +130,21 @@ class window(QMainWindow):
          title.setStyleSheet("font-size: 20px; font-weight: bold;")
 
          # Image
-         image_label = QLabel()
-         pixmap = QPixmap(300, 200)  # Placeholder image
-         pixmap.fill(QColor("gray"))  # Gray box for demo
-         image_label.setPixmap(pixmap)
-         image_label.setAlignment(Qt.AlignCenter)
-         image_label.setFixedSize(300, 200)
-
+         if app[3] == "URL\n":
+            image_location = os.path.join("appImages", f"{app[0]}.png")
+            image_label = QLabel()
+            pixmap = QPixmap(image_location)
+            image_label.setPixmap(pixmap.scaled(800, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            image_label.setAlignment(Qt.AlignCenter)
+            layout = QVBoxLayout()
+            layout.addWidget(image_label, alignment=Qt.AlignCenter)
+         elif app[3] == "File\n":
+            image_label = QLabel()
+            pixmap = QPixmap("berryLogo.png")
+            image_label.setPixmap(pixmap.scaled(800, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            image_label.setAlignment(Qt.AlignCenter)
+            layout = QVBoxLayout()
+            layout.addWidget(image_label, alignment=Qt.AlignCenter)
          #button
          button = QPushButton("Open")
          button.setStyleSheet("background-color: #5E17EB; color: white; padding: 10px; border-radius: 5px;")
