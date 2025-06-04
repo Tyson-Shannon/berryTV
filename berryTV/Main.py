@@ -9,10 +9,8 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import os
 
 import GUI
-import Remote
 
 class intro(QWidget):
    def __init__(self, parent = None):
