@@ -11,9 +11,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import os
 
-import InitSetup
-import ActivateVenv
 import GUI
+import Remote
 
 class intro(QWidget):
    def __init__(self, parent = None):
@@ -35,15 +34,6 @@ class intro(QWidget):
       self.mainWindow.showFullScreen()
       self.close()
 
-def is_venv_created(venv_path):
-    #Check if a virtual environment exists at the specified path.
-    if os.name == "nt":  # Windows
-        expected_dirs = ["Scripts", "Lib"]
-    else:  # macOS/Linux
-        expected_dirs = ["bin", "lib"]
-    # Check if the required directories exist
-    return all(os.path.isdir(os.path.join(venv_path, d)) for d in expected_dirs)
-
 def main():
    app = QApplication(sys.argv)
    introWindow = intro()
@@ -51,16 +41,4 @@ def main():
    sys.exit(app.exec_())
 
 if __name__ == '__main__':
-   #MAY NOT WORK ---------------------------------------------------
-   #check if virtual environment exists with needed packages
-   venv_location = os.path.join(os.getcwd(), ".venv")  # Path to the "venv" directory
-   if is_venv_created(venv_location) == False:
-      # Required packages
-      required_packages = ["pyqt5", "requests", "bs4"]  # List of packages to install
-      # Create and set up the virtual environment
-      InitSetup.create_and_setup_venv(venv_location, required_packages)
-
-   #activate virtual environment
-   ActivateVenv.activateVenv(venv_location) #permission denied error
-   #----------------------------------------------------------------
    main()

@@ -4,10 +4,12 @@ from PyQt5.QtWidgets import *
 import webbrowser
 import subprocess
 import os
+import socket
 
 import Settings
 import AddApp
 import RemoveApp
+import Remote
 
 class window(QMainWindow):
    def __init__(self, parent = None):
@@ -44,6 +46,17 @@ class window(QMainWindow):
       self.timer.timeout.connect(self.update_time)
       #update every second
       self.timer.start(1000)
+      #spacer
+      spacer = QWidget()
+      spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+      tb.addWidget(spacer)
+      #ip for remote
+      self.ip_label = QLabel()
+      ip_font = QFont("Arial", 20)
+      self.ip_label.setFont(ip_font) 
+      self.ip_label.setStyleSheet("color: #FFFFFF;")
+      tb.addWidget(self.ip_label)
+      self.ip_label.setText("Remote: http://"+self.get_local_ip()+":5000")
 
       #side bar
       sb = self.addToolBar("Side Bar")
@@ -180,3 +193,15 @@ class window(QMainWindow):
       current_index = self.reel.currentIndex()
       if current_index < self.reel.count() - 1:
          self.reel.setCurrentIndex(current_index + 1)
+
+   def get_local_ip(self):
+      #get ip for the remote control webserver
+      s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      try:
+         s.connect(("8.8.8.8", 80))  # Connects to Google's DNS to get local IP
+         ip = s.getsockname()[0]
+      except Exception:
+         ip = "Unable to get IP"
+      finally:
+         s.close()
+      return ip
