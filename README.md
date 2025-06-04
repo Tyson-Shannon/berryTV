@@ -9,8 +9,8 @@ Clicking the "+" to add a new app
 
 ## Python Packages
 
--Python3
--Pip
 -PyQt5
 -requests
 -bs4
+-flask
+-pynput
