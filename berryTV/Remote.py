@@ -15,7 +15,7 @@ class Remote:
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Remote Mouse & Keyboard</title>
+            <title>berryTV Remote</title>
             <style>
                 body {
                     display: flex;
@@ -139,7 +139,7 @@ class Remote:
         </head>
         <body>
             <div class="container">
-                <h2>Remote Mouse & Keyboard</h2>
+                <h2>berryTV Remote</h2>
                 <h3>Trackpad</h3>
                 <div id="trackpad"></div>
                 <button onclick="sendAction('click')">Left Click</button>
@@ -194,3 +194,8 @@ class Remote:
         
     def _run_server(self):
         self.app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+
+#remove after debug———————————————————————
+if __name__ == "__main__":
+    remote = Remote()
+    remote.run()
