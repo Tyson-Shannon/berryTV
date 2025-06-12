@@ -3,5 +3,6 @@
 - [X] Phone remote should have a track pad.<br/>
 - [ ] Phone remote should be able to enter and edit text.<br/>
 - [ ] Get settings to work so user can choose to have app launch on startup or not from within the gui.<br/><br/>
+- [ ] Allow access to wifi and bluetooth settings through the settings section of GUI
 
 *Ordered by top priority first
