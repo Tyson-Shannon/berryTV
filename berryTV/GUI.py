@@ -5,6 +5,7 @@ import webbrowser
 import subprocess
 import os
 import socket
+import threading
 
 import Settings
 import AddApp
@@ -50,7 +51,7 @@ class window(QMainWindow):
       spacer = QWidget()
       spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
       tb.addWidget(spacer)
-      #ip for remote
+      #url display for remote
       self.ip_label = QLabel()
       ip_font = QFont("Arial", 20)
       self.ip_label.setFont(ip_font) 
@@ -103,6 +104,7 @@ class window(QMainWindow):
    def sideBarBut(self, button):
       #side bar button actions
       if button.text() == "exit":
+         self.remote.shutdown()#shutdown server for remote
          self.close()
       if button.text() == "settings":
          self.setWindow = Settings.settings()
@@ -195,6 +197,10 @@ class window(QMainWindow):
          self.reel.setCurrentIndex(current_index + 1)
 
    def get_local_ip(self):
+      # Start Flask server in a new thread
+      self.remote = Remote.Remote()
+      threading.Thread(target=self.remote.run, daemon=True).start()
+
       #get ip for the remote control webserver
       s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       try:
