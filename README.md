@@ -20,3 +20,7 @@ Apps currently just open into the browser that they are connected to (unless the
 -bs4
 -flask
 -pynput
+
+## Like our remote functionality but hate everything else?
+First off, ouch.<br />
+Second you can get just the remote from [berryMOTE](https://github.com/Tyson-Shannon/berryMOTE)
