@@ -8,7 +8,7 @@ Clicking the "+" to add a new app or "-" to remove an existing app, then hit the
 ![berryTV2](https://github.com/user-attachments/assets/079a625a-8faf-4858-bb60-5fc1948c6b97)
 <br />
 Remote can be accessed from another device
-
+![berryTV3](https://github.com/user-attachments/assets/063780e8-ac54-4c80-b485-2ec1905c811c)
 <br />
 Apps currently just open into the browser that they are connected to (unless they are files/executables) however the remotes functionality still works for them
 <br />
