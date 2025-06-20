@@ -1,9 +1,10 @@
 '''
 Berry TV
-v0.01
+v1.0.0
+Version Name: Saskatoon Berry (V1)
 By Tyson Shannon
 
-An application to turn your Raspberry Pi into a smart TV
+An application to turn your Linux device into a smart TV
 '''
 import sys
 from PyQt5.QtCore import *
