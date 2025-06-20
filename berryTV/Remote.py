@@ -1,6 +1,6 @@
 from flask import Flask, render_template_string, request
 from pynput.mouse import Controller as MouseController, Button
-from pynput.keyboard import Controller as KeyboardController
+from pynput.keyboard import Controller as KeyboardController, Key
 import threading
 
 class Remote:
@@ -10,11 +10,13 @@ class Remote:
         self.keyboard = KeyboardController()
         self.shutdown_event = threading.Event()
 
-        # HTML template with virtual trackpad
+        # HTML template with virtual trackpad and live keystroke input
         self.HTML_TEMPLATE = """
         <!DOCTYPE html>
         <html>
         <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <link rel="icon" href="/static/berryLogo.png" type="image/png">
             <title>berryTV Remote</title>
             <style>
                 body {
@@ -49,13 +51,21 @@ class Remote:
                 button:hover {
                     background-color: rgb(82, 17, 212);
                 }
-                input {
-                    width: 100%;
-                    padding: 10px;
-                    font-size: 16px;
-                    margin: 10px 0;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
+                .button-row {
+                    display: flex;
+                    gap: 10px;
+                    margin-top: 10px;
+                }
+                .button-row button {
+                    flex: 1;
+                }
+                .volume-row {
+                    display: flex;
+                    gap: 10px;
+                    margin-top: 10px;
+                }
+                .volume-row button {
+                    flex: 1;
                 }
                 #trackpad {
                     width: 100%;
@@ -66,6 +76,14 @@ class Remote:
                     margin-bottom: 20px;
                     touch-action: none;
                 }
+                #keystroke-catcher {
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    height: 50px;
+                    overflow-y: auto;
+                    outline: none;
+                    margin-top: 10px;
+                }
             </style>
             <script>
                 function sendAction(action, data = "") {
@@ -75,17 +93,6 @@ class Remote:
                         body: JSON.stringify({ action, data })
                     });
                 }
-
-                function typeText() {
-                    const input = document.getElementById("key");
-                    sendAction("type", input.value);
-                    input.value = "";
-                }
-
-                // Trackpad logic
-                let isTouching = false;
-                let lastX = 0;
-                let lastY = 0;
 
                 function handleMove(x, y) {
                     if (!isTouching) return;
@@ -98,8 +105,27 @@ class Remote:
                     }
                 }
 
+                let isTouching = false;
+                let lastX = 0;
+                let lastY = 0;
+
                 window.onload = () => {
                     const trackpad = document.getElementById("trackpad");
+                    const catcher = document.getElementById("keystroke-catcher");
+                    catcher.focus();
+
+                    catcher.addEventListener("keydown", (e) => {
+                        e.preventDefault(); // Prevent displaying text
+
+                        const key = e.key;
+                        if (key === "Enter") {
+                            sendAction("type", "\\n");
+                        } else if (key === "Backspace") {
+                            sendAction("backspace");
+                        } else if (key.length === 1) {
+                            sendAction("type", key);
+                        }
+                    });
 
                     trackpad.addEventListener("mousedown", (e) => {
                         isTouching = true;
@@ -142,12 +168,18 @@ class Remote:
                 <h2>berryTV Remote</h2>
                 <h3>Trackpad</h3>
                 <div id="trackpad"></div>
-                <button onclick="sendAction('click')">Left Click</button>
-                <button onclick="sendAction('right_click')">Right Click</button>
+                <div class="button-row">
+                    <button onclick="sendAction('click')">Left Click</button>
+                    <button onclick="sendAction('right_click')">Right Click</button>
+                </div>
                 <button onclick="sendAction('scroll_up')">Scroll Up</button>
                 <button onclick="sendAction('scroll_down')">Scroll Down</button>
-                <input type="text" id="key" placeholder="Type">
-                <button onclick="typeText()">Type</button>
+                <div class="volume-row">
+                    <button onclick="sendAction('volume_down')">🔉</button>
+                    <button onclick="sendAction('volume_toggle_mute')">🔇</button>
+                    <button onclick="sendAction('volume_up')">🔊</button>
+                </div>
+                <div id="keystroke-catcher" contenteditable="true">Tap here and start typing...</div>
             </div>
         </body>
         </html>
@@ -179,6 +211,18 @@ class Remote:
             self.mouse.scroll(0, -2)
         elif action == "type" and key_data:
             self.keyboard.type(key_data)
+        elif action == "backspace":
+            self.keyboard.press(Key.backspace)
+            self.keyboard.release(Key.backspace)
+        elif action == "volume_up":
+            self.keyboard.press(Key.media_volume_up)
+            self.keyboard.release(Key.media_volume_up)
+        elif action == "volume_down":
+            self.keyboard.press(Key.media_volume_down)
+            self.keyboard.release(Key.media_volume_down)
+        elif action == "volume_toggle_mute":
+            self.keyboard.press(Key.media_volume_mute)
+            self.keyboard.release(Key.media_volume_mute)
 
         return "OK"
 
@@ -194,8 +238,3 @@ class Remote:
         
     def _run_server(self):
         self.app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
-
-#remove after debug———————————————————————
-if __name__ == "__main__":
-    remote = Remote()
-    remote.run()
